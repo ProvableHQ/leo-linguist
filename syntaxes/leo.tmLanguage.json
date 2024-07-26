@@ -1,9 +1,9 @@
 {
   "name": "leo",
   "scopeName": "source.leo",
-  "scope": "source.leo",
-  "fileTypes": ["leo"],
-  "extension": ["leo"],
+  "fileTypes": [
+    "leo"
+  ],
   "patterns": [
     {
       "include": "#function_declaration"
@@ -26,7 +26,6 @@
     {
       "include": "#string_literal"
     },
-
     {
       "include": "#integer_literal"
     },
@@ -749,7 +748,6 @@
         {
           "include": "#line_comment"
         },
-
         {
           "include": "#integer_literal"
         },
@@ -813,7 +811,6 @@
         {
           "include": "#future_type_parameters"
         },
-
         {
           "comment": "Context Annotation",
           "name": "support.other.annotation.leo",
