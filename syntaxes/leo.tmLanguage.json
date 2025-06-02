@@ -74,6 +74,9 @@
     },
     {
       "include": "#console_methods"
+    },
+    {
+      "include": "#script_keyword"
     }
   ],
   "repository": {
@@ -88,18 +91,97 @@
       "match": "(?<=\\bprogram\\b)\\s+\\b\\w+\\b\\s*\\.\\s*\\baleo\\b\\s*(?={)"
     },
     "circuit_static_call": {
-      "comment": "Circuit staitc call",
-      "match": "(\\w+)(?:\\s*::)",
+      "comment": "Circuit staitc call(Threads)",
+      "match": "(\\w+)\\s*::\\s*(\\w+)",
       "captures": {
         "1": {
-          "name": "entity.name.struct.call.leo"
+          "name": "entity.name.struct.leo"
+        },
+        "2": {
+          "name": "entity.name.function.static.leo"
         }
       }
     },
-    "circuit_call": {
-      "comment": "Circuit call",
-      "begin": "\\b\\w+\\s*\\{",
+    "function_call": {
+      "comment": "Function calls(Threads)",
+      "match": "\\b([a-zA-Z_]\\w*)\\s*(?=\\()",
+      "captures": {
+        "1": {
+          "name": "entity.name.function.call.leo"
+        }
+      }
+    },
+    "conditional_statement": {
+      "comment": "If or Else If Statement",
+      "begin": "(?<=^|\\s)(if|else\\s*if)\\s+\\w+",
       "end": "\\}",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.leo"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#conditional_statement"
+        },
+        {
+          "include": "#statement_return"
+        },
+        {
+          "include": "#variable_declaration"
+        },
+
+        {
+          "include": "#block_comment"
+        },
+        {
+          "include": "#line_comment"
+        },
+        {
+          "include": "#core_types"
+        },
+
+        {
+          "include": "#integer_literal"
+        },
+        {
+          "include": "#address_literal"
+        },
+        {
+          "include": "#built-in_core_assign"
+        },
+        {
+          "include": "#boolean_constant"
+        },
+        {
+          "include": "#control_keyword"
+        },
+        {
+          "include": "#storage_type_public"
+        },
+        {
+          "include": "#storage_type_private"
+        },
+        {
+          "include": "#storage_type_constant"
+        },
+        {
+          "include": "#storage_type_record"
+        },
+        {
+          "include": "#storage_type_let"
+        }
+      ]
+    },
+    "circuit_call": {
+      "comment": "Circuit call(Threads)",
+      "begin": "(?<=^|\\s)([a-zA-Z_]\\w*)\\s*\\{",
+      "end": "\\}",
+      "beginCaptures": {
+        "1": {
+          "name": "entity.name.struct.leo"
+        }
+      },
       "patterns": [
         {
           "include": "#circuit_attribute"
@@ -220,6 +302,9 @@
           "include": "#circuit_static_call"
         },
         {
+          "include": "#circuit_call"
+        },
+        {
           "include": "#function_parameters"
         },
         {
@@ -232,6 +317,15 @@
           "include": "#future_type_parameters"
         }
       ]
+    },
+    "custom_type_identifier": {
+      "comment": "Custom type identifiers(Threads)",
+      "match": "\\b([a-zA-Z_]\\w*)(?=\\s*[\\],;)=\\{])",
+      "captures": {
+        "1": {
+          "name": "entity.name.type.custom.leo"
+        }
+      }
     },
     "address_literal": {
       "comment": "Address",
@@ -317,6 +411,9 @@
         },
         {
           "include": "#future_type_parameters"
+        },
+        {
+          "include": "#custom_type_identifier"
         }
       ]
     },
@@ -331,7 +428,7 @@
     },
     "circuit_attribute": {
       "comment": "Circuit Attribute ",
-      "match": "\\b(\\w*)\\b\\s*:",
+      "match": "\\b([a-zA-Z_]\\w*)\\s*:(?!:)",
       "captures": {
         "1": {
           "name": "entity.other.attribute.name"
@@ -353,7 +450,7 @@
     "integer_literal": {
       "comment": "Integer literal (decimal)",
       "name": "constant.numeric.decimal.leo",
-      "match": "\\b([0-9][0-9_]*)([ui](8|16|32|64|128))?\\b"
+      "match": "\\b([0-9][0-9_]*|0b[0-1_]+|0o[0-7_]+|0x[0-9A-F_]+)([ui](8|16|32|64|128))?\\b"
     },
     "built-in_core_assign": {
       "comment": "Built-in/core assign",
@@ -454,6 +551,11 @@
       "name": "storage.type.transition.leo",
       "match": "\\b(transition)\\b"
     },
+    "script_keyword": {
+      "comment": "Storage type script",
+      "name": "storage.type.script.leo",
+      "match": "\\b(script)\\b"
+    },
     "inline_keyword": {
       "comment": "Storage type inline",
       "name": "storage.type.inline.leo",
@@ -466,7 +568,7 @@
     },
     "variable_declaration": {
       "comment": "Variable declaration",
-      "begin": "(?:(?<=\\blet\\b))\\s*\\w+\\s*\\:\\s*",
+      "begin": "(?:(?<=\\blet|const\\b))\\s*\\w+\\s*\\:\\s*",
       "end": "\\=",
       "patterns": [
         {
@@ -486,6 +588,9 @@
         },
         {
           "include": "#future_type_parameters"
+        },
+        {
+          "include": "#custom_type_identifier"
         }
       ]
     },
@@ -505,6 +610,12 @@
         },
         {
           "include": "#future_type_parameters"
+        },
+        {
+          "include": "#block_comment"
+        },
+        {
+          "include": "#line_comment"
         }
       ]
     },
@@ -539,6 +650,9 @@
         },
         {
           "include": "#future_type_parameters"
+        },
+        {
+          "include": "#custom_type_identifier"
         }
       ]
     },
@@ -552,9 +666,6 @@
         }
       },
       "patterns": [
-        {
-          "include": "#circuit_attribute"
-        },
         {
           "include": "#integer_literal"
         },
@@ -578,6 +689,12 @@
         },
         {
           "include": "#invoking_attribute"
+        },
+        {
+          "include": "#circuit_call"
+        },
+        {
+          "include": "#function_call"
         }
       ]
     },
@@ -687,7 +804,10 @@
       "end": "\\}",
       "patterns": [
         {
-          "include": "#circuit_attribute"
+          "include": "#conditional_statement"
+        },
+        {
+          "include": "#control_keyword"
         },
         {
           "include": "#variable_declaration"
@@ -700,6 +820,9 @@
         },
         {
           "include": "#statement_return"
+        },
+        {
+          "include": "#function_call"
         },
         {
           "include": "#mapping_declaration"
@@ -724,6 +847,9 @@
         },
         {
           "include": "#transition_keyword"
+        },
+        {
+          "include": "#script_keyword"
         },
         {
           "include": "#inline_keyword"
@@ -754,6 +880,12 @@
           "include": "#integer_literal"
         },
         {
+          "include": "#circuit_static_call"
+        },
+        {
+          "include": "#circuit_call"
+        },
+        {
           "include": "#core_types"
         },
         {
@@ -764,9 +896,6 @@
         },
         {
           "include": "#boolean_constant"
-        },
-        {
-          "include": "#control_keyword"
         },
         {
           "include": "#storage_type_public"
@@ -799,9 +928,6 @@
           "include": "#type_params"
         },
         {
-          "include": "#circuit_static_call"
-        },
-        {
           "include": "#method_name_call"
         },
         {
@@ -813,7 +939,6 @@
         {
           "include": "#future_type_parameters"
         },
-
         {
           "comment": "Context Annotation",
           "name": "support.other.annotation.leo",
