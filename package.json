@@ -8,7 +8,7 @@
         "yarn": "^1.22.4"
     },
     "scripts": {
-        "download:grammar": "yarn ts-node --project ./scripts/tsconfig.json ./scripts/update-tmLanguage.ts"
+        "build:grammar": "ts-node --project ./scripts/tsconfig.json ./scripts/update-tmLanguage.ts"
     },
     "devDependencies": {                    
         "@types/node": "^20.3.1",   
