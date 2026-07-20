@@ -6,943 +6,251 @@
   ],
   "patterns": [
     {
+      "include": "#comments"
+    },
+    {
+      "include": "#annotations"
+    },
+    {
+      "include": "#program_declaration"
+    },
+    {
+      "include": "#import_declaration"
+    },
+    {
       "include": "#function_declaration"
     },
     {
-      "include": "#import_file"
+      "include": "#type_declaration"
     },
     {
-      "include": "#program_file"
+      "include": "#address_literal"
     },
     {
-      "include": "#program_keyword"
+      "include": "#suffix_literal"
     },
     {
-      "include": "#block_comment"
-    },
-    {
-      "include": "#line_comment"
+      "include": "#numeric_literal"
     },
     {
       "include": "#string_literal"
     },
     {
-      "include": "#integer_literal"
+      "include": "#identifier_literal"
     },
     {
-      "include": "#built-in_core_assign"
+      "include": "#language_constants"
     },
     {
-      "include": "#boolean_constant"
+      "include": "#language_variables"
     },
     {
-      "include": "#import_keyword"
+      "include": "#assertions"
     },
     {
-      "include": "#control_keyword"
+      "include": "#declaration_keywords"
     },
     {
-      "include": "#storage_type_public"
+      "include": "#modifier_keywords"
     },
     {
-      "include": "#storage_type_private"
+      "include": "#control_keywords"
     },
     {
-      "include": "#storage_type_constant"
+      "include": "#special_types"
     },
     {
-      "include": "#storage_type_const"
+      "include": "#primitive_types"
     },
     {
-      "include": "#storage_type_record"
+      "include": "#program_id"
     },
     {
-      "include": "#storage_type_let"
+      "include": "#function_call"
     },
     {
-      "include": "#storage_type_mapping"
-    },
-    {
-      "include": "#inside_braces"
-    },
-    {
-      "include": "#type_params"
-    },
-    {
-      "include": "#function_parameters"
-    },
-    {
-      "include": "#console_methods"
-    },
-    {
-      "include": "#script_keyword"
+      "include": "#operators"
     }
   ],
   "repository": {
-    "import_file": {
-      "name": "entity.name.type.import.leo",
-      "comment": "Import file",
-      "match": "(?<=\\bimport\\b)\\s+\\b\\w+\\b\\s*\\.\\s*\\b\\w+\\b\\s*(?=;)"
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.leo",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.leo",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
     },
-    "program_file": {
-      "name": "entity.name.type.program.leo",
-      "comment": "Program file",
-      "match": "(?<=\\bprogram\\b)\\s+\\b\\w+\\b\\s*\\.\\s*\\baleo\\b\\s*(?={)"
-    },
-    "circuit_static_call": {
-      "comment": "Circuit staitc call(Threads)",
-      "match": "(\\w+)\\s*::\\s*(\\w+)",
+    "annotations": {
+      "comment": "Attribute annotations like @program, @test, @noupgrade. The name may be a keyword.",
+      "match": "(@)\\s*([A-Za-z_][A-Za-z0-9_]*)",
       "captures": {
         "1": {
-          "name": "entity.name.struct.leo"
+          "name": "punctuation.definition.annotation.leo"
         },
         "2": {
-          "name": "entity.name.function.static.leo"
+          "name": "entity.name.decorator.leo"
+        }
+      }
+    },
+    "program_declaration": {
+      "comment": "program foo.aleo { ... }",
+      "match": "\\b(program)\\s+([A-Za-z][A-Za-z0-9_]*)\\s*(\\.)\\s*(aleo)\\b",
+      "captures": {
+        "1": {
+          "name": "keyword.other.program.leo"
+        },
+        "2": {
+          "name": "entity.name.namespace.leo"
+        },
+        "3": {
+          "name": "punctuation.accessor.leo"
+        },
+        "4": {
+          "name": "keyword.other.network.leo"
+        }
+      }
+    },
+    "import_declaration": {
+      "comment": "import foo.aleo;",
+      "match": "\\b(import)\\s+([A-Za-z][A-Za-z0-9_]*)\\s*(\\.)\\s*(aleo)\\b",
+      "captures": {
+        "1": {
+          "name": "keyword.control.import.leo"
+        },
+        "2": {
+          "name": "entity.name.namespace.leo"
+        },
+        "3": {
+          "name": "punctuation.accessor.leo"
+        },
+        "4": {
+          "name": "keyword.other.network.leo"
+        }
+      }
+    },
+    "function_declaration": {
+      "comment": "Function name after fn (plain, final fn, view fn all reach `fn <name>`).",
+      "match": "\\b(fn)\\s+([A-Za-z][A-Za-z0-9_]*)",
+      "captures": {
+        "1": {
+          "name": "storage.type.function.leo"
+        },
+        "2": {
+          "name": "entity.name.function.leo"
+        }
+      }
+    },
+    "type_declaration": {
+      "comment": "Type name after struct / record / interface.",
+      "match": "\\b(struct|record|interface)\\s+([A-Za-z][A-Za-z0-9_]*)",
+      "captures": {
+        "1": {
+          "name": "storage.type.leo"
+        },
+        "2": {
+          "name": "entity.name.type.leo"
+        }
+      }
+    },
+    "address_literal": {
+      "comment": "aleo1... address literals. Must precede the `aleo` keyword and identifiers.",
+      "name": "constant.other.address.leo",
+      "match": "\\baleo1[a-z0-9]+\\b"
+    },
+    "suffix_literal": {
+      "comment": "field / group / scalar literals; accept decimal and 0x/0o/0b bases.",
+      "name": "constant.numeric.leo",
+      "match": "\\b(0x[0-9a-fA-F_]+|0o[0-7_]+|0b[01_]+|[0-9][0-9_]*)(field|group|scalar)\\b"
+    },
+    "numeric_literal": {
+      "comment": "Integer literals with optional type suffix and 0x/0o/0b bases.",
+      "name": "constant.numeric.leo",
+      "match": "\\b(0x[0-9a-fA-F_]+|0o[0-7_]+|0b[01_]+|[0-9][0-9_]*)(u8|u16|u32|u64|u128|i8|i16|i32|i64|i128)?\\b"
+    },
+    "string_literal": {
+      "name": "string.quoted.double.leo",
+      "begin": "\"",
+      "end": "\""
+    },
+    "identifier_literal": {
+      "comment": "Single-quoted identifier literals such as 'aleo', used as intrinsic arguments.",
+      "name": "string.quoted.single.leo",
+      "match": "'[A-Za-z][A-Za-z0-9_]*'"
+    },
+    "language_constants": {
+      "name": "constant.language.leo",
+      "match": "(?<!\\.)\\b(true|false|none)\\b"
+    },
+    "language_variables": {
+      "name": "variable.language.leo",
+      "match": "(?<!\\.)\\b(self|block|network)\\b"
+    },
+    "assertions": {
+      "name": "support.function.builtin.leo",
+      "match": "(?<!\\.)\\b(assert_eq|assert_neq|assert)\\b"
+    },
+    "declaration_keywords": {
+      "name": "storage.type.leo",
+      "match": "(?<!\\.)\\b(fn|struct|record|interface|mapping|storage|const|let|constructor)\\b"
+    },
+    "modifier_keywords": {
+      "name": "storage.modifier.leo",
+      "match": "(?<!\\.)\\b(export|final|view|public|private|constant|dyn)\\b"
+    },
+    "control_keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.leo",
+          "match": "(?<!\\.)\\b(if|else|for|in|return)\\b"
+        },
+        {
+          "name": "keyword.operator.cast.leo",
+          "match": "(?<!\\.)\\b(as)\\b"
+        }
+      ]
+    },
+    "special_types": {
+      "comment": "Capitalized type keywords: Final, Fn, Future.",
+      "name": "support.type.leo",
+      "match": "(?<!\\.)\\b(Final|Fn|Future)\\b"
+    },
+    "primitive_types": {
+      "name": "support.type.leo",
+      "match": "(?<!\\.)\\b(address|bool|field|group|scalar|signature|string|identifier|i8|i16|i32|i64|i128|u8|u16|u32|u64|u128)\\b"
+    },
+    "program_id": {
+      "comment": "A bare program id `name.aleo` in locators and program references.",
+      "match": "\\b([A-Za-z][A-Za-z0-9_]*)\\s*(\\.)\\s*(aleo)\\b",
+      "captures": {
+        "1": {
+          "name": "entity.name.namespace.leo"
+        },
+        "2": {
+          "name": "punctuation.accessor.leo"
+        },
+        "3": {
+          "name": "keyword.other.network.leo"
         }
       }
     },
     "function_call": {
-      "comment": "Function calls(Threads)",
-      "match": "\\b([a-zA-Z_]\\w*)\\s*(?=\\()",
+      "comment": "An identifier immediately followed by `(` is a call target.",
+      "match": "\\b([A-Za-z_][A-Za-z0-9_]*)\\s*(?=\\()",
       "captures": {
         "1": {
           "name": "entity.name.function.call.leo"
         }
       }
     },
-    "conditional_statement": {
-      "comment": "If or Else If Statement",
-      "begin": "(?<=^|\\s)(if|else\\s*if)\\s+\\w+",
-      "end": "\\}",
-      "beginCaptures": {
-        "1": {
-          "name": "keyword.control.leo"
-        }
-      },
-      "patterns": [
-        {
-          "include": "#conditional_statement"
-        },
-        {
-          "include": "#statement_return"
-        },
-        {
-          "include": "#variable_declaration"
-        },
-
-        {
-          "include": "#block_comment"
-        },
-        {
-          "include": "#line_comment"
-        },
-        {
-          "include": "#core_types"
-        },
-
-        {
-          "include": "#integer_literal"
-        },
-        {
-          "include": "#address_literal"
-        },
-        {
-          "include": "#built-in_core_assign"
-        },
-        {
-          "include": "#boolean_constant"
-        },
-        {
-          "include": "#control_keyword"
-        },
-        {
-          "include": "#storage_type_public"
-        },
-        {
-          "include": "#storage_type_private"
-        },
-        {
-          "include": "#storage_type_constant"
-        },
-        {
-          "include": "#storage_type_record"
-        },
-        {
-          "include": "#storage_type_let"
-        }
-      ]
-    },
-    "circuit_call": {
-      "comment": "Circuit call(Threads)",
-      "begin": "(?<=^|\\s)([a-zA-Z_]\\w*)\\s*\\{",
-      "end": "\\}",
-      "beginCaptures": {
-        "1": {
-          "name": "entity.name.struct.leo"
-        }
-      },
-      "patterns": [
-        {
-          "include": "#circuit_attribute"
-        },
-        {
-          "include": "#inside_braces"
-        },
-        {
-          "include": "#block_comment"
-        },
-        {
-          "include": "#line_comment"
-        },
-        {
-          "include": "#core_types"
-        },
-        {
-          "include": "#integer_literal"
-        },
-        {
-          "include": "#address_literal"
-        },
-        {
-          "include": "#built-in_core_assign"
-        },
-        {
-          "include": "#boolean_constant"
-        },
-        {
-          "include": "#control_keyword"
-        },
-        {
-          "include": "#storage_type_public"
-        },
-        {
-          "include": "#storage_type_private"
-        },
-        {
-          "include": "#storage_type_constant"
-        },
-        {
-          "include": "#storage_type_record"
-        },
-        {
-          "include": "#storage_type_let"
-        },
-        {
-          "include": "#string_literal"
-        },
-        {
-          "include": "#invoking_attribute"
-        },
-        {
-          "include": "#console_methods"
-        },
-        {
-          "include": "#future_type"
-        },
-        {
-          "include": "#future_type_parameters"
-        }
-      ]
-    },
-    "record_strucut_definition": {
-      "comment": "Record definition",
-      "begin": "(?:(?<=\\brecord\\b)|(?<=\\bstruct\\b))\\s+\\b\\w+\\b\\s*\\{",
-      "end": "\\}",
-      "patterns": [
-        {
-          "include": "#circuit_attribute"
-        },
-        {
-          "include": "#inside_braces"
-        },
-        {
-          "include": "#core_types"
-        },
-        {
-          "include": "#integer_literal"
-        },
-        {
-          "include": "#built-in_core_assign"
-        },
-        {
-          "include": "#boolean_constant"
-        },
-        {
-          "include": "#control_keyword"
-        },
-        {
-          "include": "#storage_type_public"
-        },
-        {
-          "include": "#storage_type_private"
-        },
-        {
-          "include": "#storage_type_constant"
-        },
-        {
-          "include": "#storage_type_let"
-        },
-        {
-          "include": "#string_literal"
-        },
-        {
-          "include": "#block_comment"
-        },
-        {
-          "include": "#line_comment"
-        },
-        {
-          "include": "#invoking_attribute"
-        },
-        {
-          "include": "#type_params"
-        },
-        {
-          "include": "#circuit_static_call"
-        },
-        {
-          "include": "#circuit_call"
-        },
-        {
-          "include": "#function_parameters"
-        },
-        {
-          "include": "#console_methods"
-        },
-        {
-          "include": "#future_type"
-        },
-        {
-          "include": "#future_type_parameters"
-        }
-      ]
-    },
-    "custom_type_identifier": {
-      "comment": "Custom type identifiers(Threads)",
-      "match": "\\b([a-zA-Z_]\\w*)(?=\\s*[\\],;)=\\{])",
-      "captures": {
-        "1": {
-          "name": "entity.name.type.custom.leo"
-        }
-      }
-    },
-    "address_literal": {
-      "comment": "Address",
-      "name": "constant.other.address.leo",
-      "match": "\\baleo1[A-z0-9]*"
-    },
-    "invoking_attribute": {
-      "comment": "Invoking circuit attribute",
-      "match": "(?<=\\.)(?<!\\.\\.)(\\w+(?=\\.)|\\b\\w+\\b(?!\\())",
-      "captures": {
-        "1": {
-          "name": "entity.other.attribute.name"
-        }
-      }
-    },
-    "function_declaration": {
-      "comment": "Function declaration",
-      "name": "function.declaration.leo",
-      "match": "(?:(?<=\\btransition\\b)|(?<=\\bfunction\\b)|(?<=\\binline\\b))\\s+(\\w+)\\s*\\(",
-      "captures": {
-        "1": {
-          "name": "entity.name.function.leo"
-        },
-        "2": {
-          "name": "entity.name.function.leo"
-        }
-      }
-    },
-    "function_parameters": {
-      "comment": "Function parameters",
-      "begin": "(?:(async)\\s*(function|transition|inline))\\s+(\\w+)\\s*\\(|(?:(function|transition|inline))\\s+(\\w+)\\s*\\(",
-      "end": "\\)",
-      "beginCaptures": {
-        "1": {
-          "name": "storage.type.async.leo"
-        },
-        "2": {
-          "name": "storage.type.function.leo"
-        },
-        "3": {
-          "name": "entity.name.function.leo"
-        },
-        "4": {
-          "name": "storage.type.function.leo"
-        },
-        "5": {
-          "name": "entity.name.function.leo"
-        }
-      },
-      "patterns": [
-        {
-          "include": "#function_attribute"
-        },
-        {
-          "include": "#integer_literal"
-        },
-        {
-          "include": "#boolean_constant"
-        },
-        {
-          "include": "#core_types"
-        },
-        {
-          "include": "#storage_type_public"
-        },
-        {
-          "include": "#storage_type_private"
-        },
-        {
-          "include": "#storage_type_constant"
-        },
-        {
-          "include": "#storage_type_record"
-        },
-        {
-          "include": "#line_comment"
-        },
-        {
-          "include": "#block_comment"
-        },
-        {
-          "include": "#future_type"
-        },
-        {
-          "include": "#future_type_parameters"
-        },
-        {
-          "include": "#custom_type_identifier"
-        }
-      ]
-    },
-    "function_attribute": {
-      "comment": "Function Attribute",
-      "match": "\\b(\\w*)\\b\\s*:",
-      "captures": {
-        "1": {
-          "name": "variable.parameter.leo"
-        }
-      }
-    },
-    "circuit_attribute": {
-      "comment": "Circuit Attribute ",
-      "match": "\\b([a-zA-Z_]\\w*)\\s*:(?!:)",
-      "captures": {
-        "1": {
-          "name": "entity.other.attribute.name"
-        }
-      }
-    },
-    "block_comment": {
-      "comment": "Block comment",
-      "name": "comment.block.leo",
-      "begin": "/\\*",
-      "end": "\\*/"
-    },
-    "line_comment": {
-      "comment": "Single-line comment",
-      "name": "comment.line.double-slash.leo",
-      "begin": "//",
-      "end": "$"
-    },
-    "integer_literal": {
-      "comment": "Integer literal (decimal)",
-      "name": "constant.numeric.decimal.leo",
-      "match": "\\b([0-9][0-9_]*|0b[0-1_]+|0o[0-7_]+|0x[0-9A-F_]+)([ui](8|16|32|64|128))?\\b"
-    },
-    "built-in_core_assign": {
-      "comment": "Built-in/core assign",
-      "name": "storage.type.assign.leo",
-      "match": "\\b(([0-9][0-9_]*)(group|field|scalar))"
-    },
-    "boolean_constant": {
-      "comment": "Boolean constant",
-      "name": "constant.language.boolean.leo",
-      "match": "\\b(true|false)\\b"
-    },
-    "import_keyword": {
-      "comment": "Import keyword",
-      "name": "keyword.control.import.leo",
-      "match": "\\b(import)\\b"
-    },
-    "control_keyword": {
-      "comment": "Control keyword",
-      "name": "keyword.control.leo",
-      "match": "\\b(else|if|in|for|as)\\b"
-    },
-    "storage_type_let": {
-      "comment": "Storage type let",
-      "name": "storage.type.let.leo",
-      "match": "\\b(let)\\b"
-    },
-    "storage_type_mapping": {
-      "comment": "Storage type mapping",
-      "name": "storage.type.mapping.leo",
-      "match": "\\b(mapping)\\b"
-    },
-    "storage_type_public": {
-      "comment": "Storage type public",
-      "name": "storage.type.public.leo",
-      "match": "\\b(public)\\b"
-    },
-    "storage_type_private": {
-      "comment": "Storage type private",
-      "name": "storage.type.private.leo",
-      "match": "\\b(private)\\b"
-    },
-    "storage_type_constant": {
-      "comment": "Storage type constant",
-      "name": "storage.type.constant.leo",
-      "match": "\\b(constant)\\b"
-    },
-    "storage_type_const": {
-      "comment": "Storage type const",
-      "name": "storage.type.const.leo",
-      "match": "\\b(const)\\b"
-    },
-    "storage_type_record": {
-      "comment": "Storage type record",
-      "name": "storage.type.record.leo",
-      "match": "\\b(record)\\b"
-    },
-    "string_literal": {
-      "comment": "Double-quote string literal",
-      "name": "string.quoted.double.leo",
-      "begin": "\"",
-      "end": "\""
-    },
-    "function_keyword": {
-      "comment": "Storage type function",
-      "name": "storage.type.function.leo",
-      "match": "\\b(function)\\b"
-    },
-    "struct_keyword": {
-      "comment": "Storage type struct",
-      "name": "storage.type.struct.leo",
-      "match": "\\b(struct)\\b"
-    },
-    "program_keyword": {
-      "comment": "Storage type program",
-      "name": "storage.type.program.leo",
-      "match": "\\b(program)\\b"
-    },
-    "async_keyword": {
-      "comment": "Storage type async",
-      "match": "\\b(async)\\s+((\\btransition\\b)|(\\bfunction\\b)|(\\binline\\b))\\b\\s+\\w+\\s*\\(",
-      "captures": {
-        "1": {
-          "name": "storage.type.async.leo"
-        },
-        "3": {
-          "name": "storage.type.transition.leo"
-        },
-        "4": {
-          "name": "storage.type.function.leo"
-        },
-        "5": {
-          "name": "storage.type.inline.leo"
-        }
-      }
-    },
-    "transition_keyword": {
-      "comment": "Storage type transition",
-      "name": "storage.type.transition.leo",
-      "match": "\\b(transition)\\b"
-    },
-    "script_keyword": {
-      "comment": "Storage type script",
-      "name": "storage.type.script.leo",
-      "match": "\\b(script)\\b"
-    },
-    "inline_keyword": {
-      "comment": "Storage type inline",
-      "name": "storage.type.inline.leo",
-      "match": "\\b(inline)\\b"
-    },
-    "core_types": {
-      "comment": "Built-in/core type",
-      "name": "storage.type.core.leo",
-      "match": "\\b(bool|field|scalar|u8|u16|u32|u64|u128|i8|i16|i32|i64|i128|string|address|signature|group|integer)\\b"
-    },
-    "variable_declaration": {
-      "comment": "Variable declaration",
-      "begin": "(?:(?<=\\blet|const\\b))\\s*\\w+\\s*\\:\\s*",
-      "end": "\\=",
-      "patterns": [
-        {
-          "include": "#core_types"
-        },
-        {
-          "include": "#integer_literal"
-        },
-        {
-          "include": "#block_comment"
-        },
-        {
-          "include": "#line_comment"
-        },
-        {
-          "include": "#future_type"
-        },
-        {
-          "include": "#future_type_parameters"
-        },
-        {
-          "include": "#custom_type_identifier"
-        }
-      ]
-    },
-    "mapping_declaration": {
-      "comment": "Mapping declaration",
-      "begin": "(?<=\\bmapping\\b)\\s+\\w+\\:s*",
-      "end": "$",
-      "patterns": [
-        {
-          "include": "#core_types"
-        },
-        {
-          "include": "#integer_literal"
-        },
-        {
-          "include": "#future_type"
-        },
-        {
-          "include": "#future_type_parameters"
-        },
-        {
-          "include": "#block_comment"
-        },
-        {
-          "include": "#line_comment"
-        }
-      ]
-    },
-    "return_type": {
-      "comment": "Return type",
-      "begin": "->",
-      "end": "(?={)",
-      "patterns": [
-        {
-          "include": "#core_types"
-        },
-        {
-          "include": "#storage_type_public"
-        },
-        {
-          "include": "#storage_type_private"
-        },
-        {
-          "include": "#storage_type_constant"
-        },
-        {
-          "include": "#integer_literal"
-        },
-        {
-          "include": "#block_comment"
-        },
-        {
-          "include": "#line_comment"
-        },
-        {
-          "include": "#future_type"
-        },
-        {
-          "include": "#future_type_parameters"
-        },
-        {
-          "include": "#custom_type_identifier"
-        }
-      ]
-    },
-    "statement_return": {
-      "comment": "Statement return",
-      "begin": "\\b(return)\\b",
-      "end": ";",
-      "beginCaptures": {
-        "1": {
-          "name": "keyword.control.leo"
-        }
-      },
-      "patterns": [
-        {
-          "include": "#integer_literal"
-        },
-        {
-          "include": "#address_literal"
-        },
-        {
-          "include": "#built-in_core_assign"
-        },
-        {
-          "include": "#boolean_constant"
-        },
-        {
-          "include": "#block_comment"
-        },
-        {
-          "include": "#line_comment"
-        },
-        {
-          "include": "#method_name_call"
-        },
-        {
-          "include": "#invoking_attribute"
-        },
-        {
-          "include": "#circuit_call"
-        },
-        {
-          "include": "#function_call"
-        }
-      ]
-    },
-    "statement_for_iterator_type": {
-      "comment": "Statement for iterator type",
-      "begin": "(?<=for)\\s*\\w+:\\s*",
-      "end": "(?=in)",
-      "patterns": [
-        {
-          "include": "#core_types"
-        },
-        {
-          "include": "#future_type"
-        },
-        {
-          "include": "#future_type_parameters"
-        }
-      ]
-    },
-    "console_methods": {
-      "comment": "Console methods",
-      "match": "\\b(assert|assert_eq|assert_neq)\\b",
-      "captures": {
-        "1": {
-          "name": "support.function.console.leo"
-        }
-      }
-    },
-    "method_name_call": {
-      "comment": "Method name call",
-      "match": "\\w+\\s*\\.\\s*([a-zA-Z][a-zA-Z0-9_]*)\\s*",
-      "captures": {
-        "1": {
-          "name": "entity.name.struct.attribute.leo"
-        }
-      }
-    },
-    "future_type": {
-      "comment": "Storage type future",
-      "match": "\\b(Future)\\b",
-      "captures": {
-        "1": {
-          "name": "storage.type.future.leo"
-        }
-      }
-    },
-    "future_type_parameters": {
-      "comment": "Parameters of future type",
-      "begin": "(?<=Future)\\s*(\\<)",
-      "end": "(\\>)",
-      "beginCaptures": {
-        "1": {
-          "name": "storage.type.future.angle.brackets.leo"
-        }
-      },
-      "endCaptures": {
-        "1": {
-          "name": "storage.type.future.angle.brackets.leo"
-        }
-      },
-      "patterns": [
-        {
-          "begin": "(Fn)",
-          "end": "(\\))",
-          "beginCaptures": {
-            "1": {
-              "name": "storage.type.future.leo"
-            }
-          },
-          "endCaptures": {
-            "1": {
-              "name": "storage.type.future.parantesis.leo"
-            }
-          },
-          "patterns": [
-            {
-              "begin": "(\\()",
-              "end": "(?=\\))",
-              "beginCaptures": {
-                "1": {
-                  "name": "storage.type.future.parantesis.leo"
-                }
-              },
-              "patterns": [
-                {
-                  "include": "#core_types"
-                },
-                {
-                  "include": "#integer_literal"
-                },
-                {
-                  "include": "#future_type"
-                },
-                {
-                  "include": "#future_type_parameters"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    "inside_braces": {
-      "comment": "Inside braces (sub-rule for use in function)",
-      "name": "punctuation.braces.leo",
-      "begin": "\\{",
-      "end": "\\}",
-      "patterns": [
-        {
-          "include": "#conditional_statement"
-        },
-        {
-          "include": "#control_keyword"
-        },
-        {
-          "include": "#variable_declaration"
-        },
-        {
-          "include": "#statement_for_iterator_type"
-        },
-        {
-          "include": "#return_type"
-        },
-        {
-          "include": "#statement_return"
-        },
-        {
-          "include": "#function_call"
-        },
-        {
-          "include": "#mapping_declaration"
-        },
-        {
-          "include": "#function_parameters"
-        },
-        {
-          "include": "#function_declaration"
-        },
-        {
-          "include": "#async_keyword"
-        },
-        {
-          "include": "#function_keyword"
-        },
-        {
-          "include": "#struct_keyword"
-        },
-        {
-          "include": "#program_keyword"
-        },
-        {
-          "include": "#transition_keyword"
-        },
-        {
-          "include": "#script_keyword"
-        },
-        {
-          "include": "#inline_keyword"
-        },
-        {
-          "include": "#record_strucut_definition"
-        },
-        {
-          "include": "#storage_type_mapping"
-        },
-        {
-          "include": "#import_file"
-        },
-        {
-          "include": "#program_file"
-        },
-        {
-          "include": "#inside_braces"
-        },
-        {
-          "include": "#block_comment"
-        },
-        {
-          "include": "#line_comment"
-        },
-        {
-          "include": "#integer_literal"
-        },
-        {
-          "include": "#circuit_static_call"
-        },
-        {
-          "include": "#circuit_call"
-        },
-        {
-          "include": "#core_types"
-        },
-        {
-          "include": "#address_literal"
-        },
-        {
-          "include": "#built-in_core_assign"
-        },
-        {
-          "include": "#boolean_constant"
-        },
-        {
-          "include": "#storage_type_public"
-        },
-        {
-          "include": "#storage_type_private"
-        },
-        {
-          "include": "#storage_type_constant"
-        },
-        {
-          "include": "#storage_type_const"
-        },
-        {
-          "include": "#storage_type_record"
-        },
-        {
-          "include": "#storage_type_let"
-        },
-        {
-          "include": "#string_literal"
-        },
-        {
-          "include": "#invoking_attribute"
-        },
-        {
-          "include": "#console_methods"
-        },
-        {
-          "include": "#type_params"
-        },
-        {
-          "include": "#method_name_call"
-        },
-        {
-          "include": "#console_methods"
-        },
-        {
-          "include": "#future_type"
-        },
-        {
-          "include": "#future_type_parameters"
-        },
-        {
-          "comment": "Context Annotation",
-          "name": "support.other.annotation.leo",
-          "match": "@[a-zA-Z][a-zA-Z0-9_]*"
-        }
-      ]
+    "operators": {
+      "name": "keyword.operator.leo",
+      "match": "->|=>|::|\\.\\.=?|\\*\\*=?|<<=?|>>=?|&&=?|\\|\\|=?|==|!=|<=|>=|[+\\-*/%&|^]=?|[<>!?=]"
     }
   }
 }
